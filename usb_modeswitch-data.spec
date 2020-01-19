@@ -1,8 +1,8 @@
 %global source_name	usb-modeswitch-data
 
 Name:		usb_modeswitch-data
-Version:	20160612
-Release:	2%{?dist}
+Version:	20170806
+Release:	1%{?dist}
 Summary:	USB Modeswitch gets mobile broadband cards in operational mode
 Summary(de):	USB Modeswitch aktiviert UMTS-Karten
 Group:		Applications/System
@@ -14,8 +14,6 @@ BuildRequires:	systemd
 Requires:	systemd
 Requires:	usb_modeswitch >= 2.4.0
 
-# http://www.draisberghof.de/usb_modeswitch/bb/viewtopic.php?f=2&t=2560
-Patch0:         0001-Bring-back-the-module-binding.patch
 
 %description
 USB Modeswitch brings up your datacard into operational mode. When plugged
@@ -38,11 +36,8 @@ um zu funktionieren.
 
 %prep
 %setup -q -n %{source_name}-%{version}
-%patch0 -p1
 
 %build
-# The shipped "prebuilt" udev rules file diverged from what's being generated
-#make %{_smp_mflags}
 
 %install
 make install \
@@ -62,6 +57,9 @@ make install \
 %doc ChangeLog README REFERENCE
 
 %changelog
+* Tue Aug 29 2017 Lubomir Rintel <lrintel@redhat.com> - 20170806-1
+- Update to a new release (rh #1483051)
+
 * Thu Jul 21 2016 Lubomir Rintel <lkundrak@v3.sk> - 20160612-2
 - Install the rules into proper location (rh #1352055)
 - Bring back the module binding
