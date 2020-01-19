@@ -2,7 +2,7 @@
 
 Name:		usb_modeswitch-data
 Version:	20130807
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	USB Modeswitch gets mobile broadband cards in operational mode
 Summary(de):	USB Modeswitch aktiviert UMTS-Karten
 Group:		Applications/System
@@ -63,6 +63,9 @@ udevadm control --reload-rules || :
 %doc ChangeLog COPYING README
 
 %changelog
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 20130807-2
+- Mass rebuild 2013-12-27
+
 * Fri Aug 16 2013 Dan Williams <dcbw@redhat.com> - 20130807-1
 - New upstream release
 
