@@ -1,8 +1,5 @@
 # Option GlobeTrotter GI1515
-
-TargetVendor=  0x0af0
-TargetProduct= 0xd157
-
-MessageContent="55534243785634120100000080000601000000000000000000000000000000"
-
+TargetVendor=0x0af0
+TargetProductList="d157,d255,d257"
+OptionMode=1
 NoDriverLoading=1

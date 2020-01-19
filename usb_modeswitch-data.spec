@@ -1,8 +1,8 @@
-%define source_name	usb-modeswitch-data
+%global source_name	usb-modeswitch-data
 
 Name:		usb_modeswitch-data
-Version:	20130807
-Release:	1%{?dist}
+Version:	20160612
+Release:	2%{?dist}
 Summary:	USB Modeswitch gets mobile broadband cards in operational mode
 Summary(de):	USB Modeswitch aktiviert UMTS-Karten
 Group:		Applications/System
@@ -10,13 +10,12 @@ License:	GPLv2+
 URL:		http://www.draisberghof.de/usb_modeswitch/
 Source0:	http://www.draisberghof.de/usb_modeswitch/%{source_name}-%{version}.tar.bz2
 BuildArch:	noarch
-Requires:	udev
+BuildRequires:	systemd
+Requires:	systemd
+Requires:	usb_modeswitch >= 2.4.0
 
-# 1.2.3-1 removes the requirement on TCL which was mistakenly
-# in the -data package, so require 1.2.3-1 to ensure that both
-# usb_modeswitch and -data agree on whether TCL is needed or not
-Requires:	usb_modeswitch >= 1.2.5
-
+# http://www.draisberghof.de/usb_modeswitch/bb/viewtopic.php?f=2&t=2560
+Patch0:         0001-Bring-back-the-module-binding.patch
 
 %description
 USB Modeswitch brings up your datacard into operational mode. When plugged
@@ -39,30 +38,40 @@ um zu funktionieren.
 
 %prep
 %setup -q -n %{source_name}-%{version}
+%patch0 -p1
 
 %build
+# The shipped "prebuilt" udev rules file diverged from what's being generated
+#make %{_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/usb_modeswitch.d/
-mkdir -p $RPM_BUILD_ROOT/lib/udev/rules.d/
-
-install -p -m 644  usb_modeswitch.d/* $RPM_BUILD_ROOT%{_sysconfdir}/usb_modeswitch.d/
-install -p -m 644 40-usb_modeswitch.rules $RPM_BUILD_ROOT/lib/udev/rules.d
+make install \
+	DESTDIR=$RPM_BUILD_ROOT \
+	RULESDIR=$RPM_BUILD_ROOT%{_udevrulesdir}
 
 %post 
-udevadm control --reload-rules || :
+%udev_rules_update
 
 %postun
-udevadm control --reload-rules || :
+%udev_rules_update
 
 %files
-%defattr(-,root,root,-)
-/lib/udev/rules.d/40-usb_modeswitch.rules
-%config(noreplace) %{_sysconfdir}/usb_modeswitch.d/
-%doc ChangeLog COPYING README
+%{_udevrulesdir}/40-usb_modeswitch.rules
+%{_datadir}/usb_modeswitch
+%license COPYING
+%doc ChangeLog README REFERENCE
 
 %changelog
+* Thu Jul 21 2016 Lubomir Rintel <lkundrak@v3.sk> - 20160612-2
+- Install the rules into proper location (rh #1352055)
+- Bring back the module binding
+
+* Wed Jun 22 2016 Lubomir Rintel <lkundrak@v3.sk> - 20160612-1
+- Update to a new release
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 20130807-2
+- Mass rebuild 2013-12-27
+
 * Fri Aug 16 2013 Dan Williams <dcbw@redhat.com> - 20130807-1
 - New upstream release
 
